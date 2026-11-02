@@ -1,4 +1,4 @@
-# AgentBench — AI Evaluation Platform (MVP)
+# AgentBench : AI Evaluation Platform (MVP)
 
 FastAPI backend that benchmarks deterministic baseline strategies against test cases, records per-case accuracy and latency, and stores experiment history in SQLite.
 
