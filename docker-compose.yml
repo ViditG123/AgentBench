@@ -1,0 +1,11 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - agentbench_data:/data
+    environment:
+      AGENTBENCH_DB: /data/agentbench.db
+volumes:
+  agentbench_data:
