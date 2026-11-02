@@ -1,5 +1,40 @@
 # AgentBench — AI Evaluation Platform (MVP)
 
-FastAPI-based deterministic evaluation service. The downloadable starter pack includes SQLite experiment tracking, tests and Docker configuration.
+FastAPI backend that benchmarks deterministic baseline strategies against test cases, records per-case accuracy and latency, and stores experiment history in SQLite.
 
-This repository is being initialized. Real LLM agent evaluation, React, and PostgreSQL are planned rather than implemented.
+> **Scope:** This is a starter evaluation backend, **not yet a real LLM-agent benchmarking platform**. Real LLM provider integrations, RAG, React, PostgreSQL and multi-step agent evaluation are future work.
+
+## Run locally
+
+```bash
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# macOS/Linux: source .venv/bin/activate
+python -m pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+Open http://127.0.0.1:8000/docs. POST the contents of `examples/run.json` to `/experiments`, then GET `/experiments`.
+
+## Docker and tests
+
+```bash
+docker compose up --build
+python -m pytest -q
+```
+
+## Features
+
+- Experiment submission with echo, lowercase and reverse baseline strategies
+- Per-case expected/actual comparisons, pass/fail and latency
+- Persistent experiment history and detail endpoints
+- FastAPI Swagger UI, Docker, unit tests
+
+## Roadmap
+
+- [ ] LLM provider adapters and real agent tasks
+- [ ] React/TypeScript dashboard
+- [ ] PostgreSQL persistence
+- [ ] RAG and tool-use evaluation
+
+Use synthetic/public data only; never commit API keys.
