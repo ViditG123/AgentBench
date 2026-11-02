@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+from app.adapters import run_chat_completion
 
 DB_PATH = os.getenv("AGENTBENCH_DB", "agentbench.db")
 app = FastAPI(title="AgentBench", version="0.1.0")
@@ -33,6 +34,7 @@ class RunRequest(BaseModel):
     name: str = Field(min_length=1)
     strategy: str = "echo"
     cases: list[Case] = Field(min_length=1)
+    model: str | None = None
 
 def evaluate(strategy: str, prompt: str) -> str:
     if strategy == "echo":
@@ -54,13 +56,21 @@ def health():
 
 @app.post("/experiments")
 def run_experiment(req: RunRequest):
-    if req.strategy not in ("echo", "lowercase", "reverse"):
+    if req.strategy not in ("echo", "lowercase", "reverse", "llm"):
         raise HTTPException(status_code=400, detail="Unsupported strategy")
     results = []
     total_ms = 0.0
     for case in req.cases:
         started = time.perf_counter()
-        actual = evaluate(req.strategy, case.prompt)
+        try:
+            if req.strategy == "llm":
+                if not req.model:
+                    raise HTTPException(status_code=422, detail="model is required for llm strategy")
+                actual = run_chat_completion(case.prompt, req.model)
+            else:
+                actual = evaluate(req.strategy, case.prompt)
+        except (RuntimeError, KeyError, IndexError, ValueError) as exc:
+            raise HTTPException(status_code=502, detail=f"Evaluation provider failed: {exc}") from exc
         elapsed = (time.perf_counter() - started) * 1000
         total_ms += elapsed
         results.append({"prompt": case.prompt, "expected": case.expected, "actual": actual, "passed": actual == case.expected, "latency_ms": elapsed})
