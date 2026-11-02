@@ -1,0 +1,8 @@
+{
+  "name": "baseline",
+  "strategy": "echo",
+  "cases": [
+    {"prompt": "hello", "expected": "hello"},
+    {"prompt": "world", "expected": "world"}
+  ]
+}
