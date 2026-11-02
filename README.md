@@ -38,3 +38,15 @@ python -m pytest -q
 - [ ] RAG and tool-use evaluation
 
 Use synthetic/public data only; never commit API keys.
+
+## React dashboard (local)
+
+Run the Python API on port 8000. In another terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. The Vite development server proxies `/api` to FastAPI. The UI submits baseline evaluations and displays history. `app/adapters.py` contains an opt-in OpenAI-compatible chat-completions adapter, but it is **not yet connected to the benchmark API**. Real agent/tool-use evaluation remains future work.
