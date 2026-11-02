@@ -50,3 +50,13 @@ npm run dev
 ```
 
 Open http://localhost:5173. The Vite development server proxies `/api` to FastAPI. The UI submits baseline evaluations and displays history. `app/adapters.py` contains an opt-in OpenAI-compatible chat-completions adapter, but it is **not yet connected to the benchmark API**. Real agent/tool-use evaluation remains future work.
+
+## LLM evaluation (opt-in)
+
+The `/experiments` endpoint now accepts `strategy: "llm"` and a `model` identifier. Set `OPENAI_API_KEY` in the backend environment before running a real request; each test case sends its prompt to the configured chat-completions provider. Example request:
+
+```json
+{"name":"provider-smoke-test","strategy":"llm","model":"YOUR_AVAILABLE_MODEL","cases":[{"prompt":"Reply with the word hello","expected":"hello"}]}
+```
+
+This requires a valid provider account and may incur API charges. Tests use a mocked provider and require no API key. **Exact-string accuracy is a limited baseline metric, not a reliable evaluation of agent reasoning, tool use, or task completion.** No production provider calls have been verified here.
